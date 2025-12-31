@@ -460,23 +460,36 @@ modelnames = [
 
 
 # -------------------- PREDICTION FUNCTION --------------------
-def predict_heart_disease(data):
+def predict_single(data):
+    """Predict for a single patient"""
     predictions = []
 
     for modelname in modelnames:
-        if not os.path.exists(modelname) or os.path.getsize(modelname) == 0:
-            predictions.append("Model Error")
-            continue
-
         try:
             with open(modelname, "rb") as file:
                 model = pickle.load(file)
-                pred = model.predict(data)
-                predictions.append(pred[0])
-        except Exception:
+                pred = model.predict(data)[0]
+                predictions.append(pred)
+        except:
             predictions.append("Model Error")
 
     return predictions
+
+
+def predict_bulk(df):
+    """Predict for multiple patients (row-wise)"""
+    results = {}
+
+    for modelname, model_file in zip(algorithm, modelnames):
+        try:
+            with open(model_file, "rb") as file:
+                model = pickle.load(file)
+                results[modelname] = model.predict(df)
+        except:
+            results[modelname] = ["Error"] * len(df)
+
+    return results
+
 
 
 # -------------------- TAB 1 : SINGLE PREDICTION --------------------
@@ -573,7 +586,8 @@ with tab1:
                 'ST_Slope': [st_slope]
             })
             
-            results = predict_heart_disease(input_data)
+            results = predict_single(input_data)
+
             valid_preds = [r for r in results if r in [0, 1]]
             risk_percentage = (sum(valid_preds) / len(valid_preds)) * 100 if valid_preds else 0
             
@@ -676,10 +690,11 @@ with tab2:
                 with col2:
                     if st.button("🚀 Run Batch Prediction", use_container_width=True):
                         with st.spinner("Processing predictions..."):
-                            results = predict_heart_disease(df)
+                            bulk_results = predict_bulk(df)
 
-                            for model_name, prediction in zip(algorithm, results):
-                                df[model_name] = prediction
+                        for model_name, preds in bulk_results.items():
+                            df[model_name] = preds
+
 
                         st.success("✅ Predictions completed successfully!")
                         st.subheader("📊 Results")
