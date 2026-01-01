@@ -693,7 +693,16 @@ with tab1:
             key="ecg"
         )
         
-        max_hr = st.number_input("Maximum Heart Rate Achieved", 60, 202, 150, key="hr")
+        # Updated for pediatric safety and range accuracy
+        max_hr = st.number_input(
+            label="Maximum Heart Rate Achieved (BPM)",
+            min_value=80,    # Normal toddler baseline
+            max_value=220,   # Accommodates 220-age formula
+            value=150,       # Sensible default for active play
+            step=1,
+            key="hr"
+        )
+
         
         exercise_angina = st.selectbox(
             "Exercise Induced Angina",
