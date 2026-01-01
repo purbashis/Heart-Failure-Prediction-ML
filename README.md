@@ -6,8 +6,8 @@ The application provides **real-time predictions**, **model explainability**, an
 ---
 
 ## 🚀 Live Demo
-🔗 ## 🚀 Live Demo
-🔗 **Live App:** [Heart Disease Prediction App](https://heart-failure-prediction-ml-by-purbashis.streamlit.app/)
+
+ [Heart Disease Prediction App](https://heart-failure-prediction-ml-by-purbashis.streamlit.app/)
 
 
 ---
